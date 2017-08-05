@@ -94,4 +94,31 @@ namespace ImGui {
 		ImGui::MenuItem("Default") && applyStyle<IMGUI_STYLE_DEFAULT>();
 		ImGui::MenuItem("Teal and Orange") && applyStyle<IMGUI_STYLE_TEAL_AND_ORANGE>();
 	}
+
+    template <int nFrames, typename Color>
+        static void renderDebugWindow(int frametime_ms, Color & clearColor) {
+            ImGui::ColorEdit3("clear color", (float*)&clearColor);
+            static bool verticalSync = true;
+            if (ImGui::Checkbox("VSync", &verticalSync)) {
+                glfwSwapInterval(verticalSync ? 1 : 0);
+            }
+
+            {
+                ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+                static int historyFPSId = 0;
+                static float historyFPS[nFrames];
+                historyFPS[historyFPSId] = ImGui::GetIO().Framerate;
+                if (++historyFPSId == nFrames) historyFPSId = 0;
+                ImGui::PlotLines("##overlayFPS", historyFPS, nFrames, historyFPSId, "FPS", 0.0f, 70.0f, ImVec2(300, 80));
+            }
+
+            {
+                ImGui::Text("Frame calculation: %d ms", frametime_ms);
+                static int historyFrametimeId = 0;
+                static float historyFrametime[nFrames];
+                historyFrametime[historyFrametimeId] = frametime_ms;
+                if (++historyFrametimeId == nFrames) historyFrametimeId = 0;
+                ImGui::PlotLines("##overlayFrametime", historyFrametime, nFrames, historyFrametimeId, "Frametime", 0.0f, 16.0f, ImVec2(300, 80));
+            }
+        }
 }

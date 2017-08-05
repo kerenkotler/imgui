@@ -14,7 +14,7 @@ namespace ImGui {
         IMGUI_STYLE_TEAL_AND_ORANGE,
     };
 
-    template <StyleId S>
+    template <StyleId>
         static bool applyStyle();
 
     template <>

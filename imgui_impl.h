@@ -5,6 +5,10 @@
 
 #pragma once
 
+#if (defined(__EMSCRIPTEN__))
+#define IMGUI_IMPL_OPENGL_LOADER_GLEW
+#endif
+
 #include "examples/imgui_impl_glfw.h"
 #include "examples/imgui_impl_opengl3.h"
 
@@ -65,7 +69,13 @@ bool ImGui_Init(GLFWwindow* window, bool install_callbacks) {
     // Setup Platform/Renderer bindings
     bool res = true;
     res &= ImGui_ImplGlfw_InitForOpenGL(window, install_callbacks);
+
+#ifdef __EMSCRIPTEN__
+    res &= ImGui_ImplOpenGL3_Init("#version 300 es");
+#else
     res &= ImGui_ImplOpenGL3_Init(glsl_version);
+#endif
+
     return res;
 }
 

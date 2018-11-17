@@ -44,7 +44,7 @@ set_target_properties(ImGui PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_include_directories(ImGui PUBLIC
     ${GLFW_INCLUDE_DIRS}
-    ${IMGUI_INCLUDE_DIRS}/examples/libs/gl3w
+    ${IMGUI_INCLUDE_DIRS}
     )
 
 target_include_directories(ImGui PRIVATE

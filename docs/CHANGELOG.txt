@@ -42,6 +42,13 @@ Breaking Changes:
   It was also getting in the way of better font scaling, so let's get rid of it now! 
   If you used DisplayOffset it was probably in association to rasterizing a font at a specific size,
   in which case the corresponding offset may be reported into GlyphOffset. (#1619)
+- Style: Renamed style.TabMinWidthForUnselectedCloseButton to style.TabMinWidthForCloseButton.
+- Renamed ImGuiSliderFlags_ClampOnInput to ImGuiSliderFlags_AlwaysClamp. Kept redirection enum (will obsolete).
+- Renamed OpenPopupContextItem() back to OpenPopupOnItemClick(), REVERTED CHANGE FROM 1.77.
+  For variety of reason this is more self-explanatory.
+- Removed return value from OpenPopupOnItemClick() - returned true on mouse release on item - because it
+  is inconsistent with other popups API and makes others misleading. It's also and unnecessary: you can
+  use IsWindowAppearing() after BeginPopup() for a similar result.
 
 Other Changes:
 
@@ -60,9 +67,9 @@ Other Changes:
 - InputText: Fixed minor scrolling glitch when erasing trailing lines in InputTextMultiline().
 - InputText: Fixed cursor being partially covered after using Ctrl+End key.
 - InputText: Fixed callback's helper DeleteChars() function when cursor is inside the deleted block. (#3454)
-- InputText: Made pressing Down arrow on the last line when it doesn't have a carriage return not move to the end
-  of the line (so it is consistent with Up arrow, and behave same as Notepad and Visual Studio. Note that some 
-  other text editors instead would move the crusor to the end of the line). [@Xipiryon]
+- InputText: Made pressing Down arrow on the last line when it doesn't have a carriage return not move to
+  the end of the line (so it is consistent with Up arrow, and behave same as Notepad and Visual Studio. 
+  Note that some other text editors instead would move the crusor to the end of the line). [@Xipiryon]
 - DragFloat, DragScalar: Fixed ImGuiSliderFlags_ClampOnInput not being honored in the special case
   where v_min == v_max. (#3361)
 - SliderInt, SliderScalar: Fixed reaching of maximum value with inverted integer min/max ranges, both
@@ -75,7 +82,15 @@ Other Changes:
   rather than the Mouse Down+Up sequence, even if the _OpenOnArrow flag isn't set. This is standard behavior
   and amends the change done in 1.76 which only affected cases were _OpenOnArrow flag was set.
   (This is also necessary to support full multi/range-select/drag and drop operations.)
+- Tab Bar: Added TabItemButton() to submit tab that behave like a button. (#3291) [@Xipiryon]
+- Tab Bar: Added ImGuiTabItemFlags_Leading and ImGuiTabItemFlags_Trailing flags to position tabs or button 
+  at either end of the tab bar. Those tabs won't be part of the scrolling region, and when reordering cannot
+  be moving outside of their section. Most often used with TabItemButton(). (#3291) [@Xipiryon]
+- Tab Bar: Added ImGuiTabItemFlags_NoReorder flag to disable reordering a given tab.
 - Tab Bar: Keep tab item close button visible while dragging a tab (independent of hovering state).
+- Tab Bar: Fixed a small bug where closing a tab that is not selected would leave a tab hole for a frame.
+- Tab Bar: Fixed a small bug where scrolling buttons (with ImGuiTabBarFlags_FittingPolicyScroll) would
+  generate an unnecessary extra draw call.
 - Tab Bar: Fixed a small bug where toggling a tab bar from Reorderable to not Reorderable would leave
   tabs reordered in the tab list popup. [@Xipiryon]
 - Columns: Fix inverted ClipRect being passed to renderer when using certain primitives inside of
@@ -147,6 +162,7 @@ Other Changes:
     which was obsoleted. (#1823, #1316, #642) [@Shironekoben, @AndrewBelt]
   - Added ImGuiSliderFlags_ClampOnInput flag to force clamping value when using
     CTRL+Click to type in a value manually. (#1829, #3209, #946, #413).
+    [note: RENAMED to ImGuiSliderFlags_AlwaysClamp in 1.79].
   - Added ImGuiSliderFlags_NoRoundToFormat flag to disable rounding underlying
     value to match precision of the display format string. (#642)
   - Added ImGuiSliderFlags_NoInput flag to disable turning widget into a text input
@@ -210,6 +226,7 @@ Breaking Changes:
   note that this is a Beta api and will likely be reworked in order to support multi-DPI across
   multiple monitors.
 - Renamed OpenPopupOnItemClick() to OpenPopupContextItem(). Kept inline redirection function (will obsolete).
+  [NOTE: THIS WAS REVERTED IN 1.79]
 - Removed BeginPopupContextWindow(const char*, int mouse_button, bool also_over_items) in favor
   of BeginPopupContextWindow(const char*, ImGuiPopupFlags flags) with ImGuiPopupFlags_NoOverItems.
   Kept inline redirection function (will obsolete).

@@ -3577,7 +3577,7 @@ void ImGui::RenderBullet(ImDrawList* draw_list, ImVec2 pos, ImU32 col)
     draw_list->AddText(ImVec2(pos.x - 0.5, pos.y - 0.5), col, "B");
 }
 
-void ImGui::RenderCheckMark(ImDrawList* draw_list, ImVec2 pos, ImU32 col, float sz)
+void ImGui::RenderCheckMark(ImDrawList* draw_list, ImVec2 pos, ImU32 col, float sz, const char * symbol)
 {
     float thickness = ImMax(sz / 5.0f, 1.0f);
     sz -= thickness*0.5f;
@@ -3590,7 +3590,7 @@ void ImGui::RenderCheckMark(ImDrawList* draw_list, ImVec2 pos, ImU32 col, float 
     //draw_list->PathLineTo(ImVec2(bx, by));
     //draw_list->PathLineTo(ImVec2(bx + third*2, by - third*2));
     //draw_list->PathStroke(col, false, thickness);
-    draw_list->AddText(ImVec2(pos.x - 0.5, pos.y - 0.5), col, "X");
+    draw_list->AddText(ImVec2(pos.x - 0.5, pos.y - 0.5), col, symbol);
 }
 
 void ImGui::RenderMouseCursor(ImDrawList* draw_list, ImVec2 pos, float scale, ImGuiMouseCursor mouse_cursor, ImU32 col_fill, ImU32 col_border, ImU32 col_shadow)

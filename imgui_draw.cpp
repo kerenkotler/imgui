@@ -3327,6 +3327,8 @@ void ImFont::RenderChar(ImDrawList* draw_list, float size, ImVec2 pos, ImU32 col
     draw_list->PrimRectUV(ImVec2(pos.x + glyph->X0 * scale, pos.y + glyph->Y0 * scale), ImVec2(pos.x + glyph->X1 * scale, pos.y + glyph->Y1 * scale), ImVec2(glyph->U0, glyph->V0), ImVec2(glyph->U1, glyph->V1), col);
 }
 
+bool g_run_imtui = false;
+
 void ImFont::RenderText(ImDrawList* draw_list, float size, ImVec2 pos, ImU32 col, const ImVec4& clip_rect, const char* text_begin, const char* text_end, float wrap_width, bool cpu_fine_clip) const
 {
     if (!text_end)
@@ -3446,11 +3448,22 @@ void ImFont::RenderText(ImDrawList* draw_list, float size, ImVec2 pos, ImU32 col
         float char_width = glyph->AdvanceX * scale;
         if (glyph->Visible)
         {
+            float x1 = 0;
+            float x2 = 0;
+            float y1 = 0;
+            float y2 = 0;
             // We don't do a second finer clipping test on the Y axis as we've already skipped anything before clip_rect.y and exit once we pass clip_rect.w
-            float x1 = x;
-            float x2 = x + 1.0;
-            float y1 = y - 0.5f;
-            float y2 = y - 0.5f;
+            if (g_run_imtui) {
+                x1 = x;
+                x2 = x + 1.0;
+                y1 = y - 0.5f;
+                y2 = y - 0.5f;
+            } else {
+                x1 = x + glyph->X0 * scale;
+                x2 = x + glyph->X1 * scale;
+                y1 = y + glyph->Y0 * scale;
+                y2 = y + glyph->Y1 * scale;
+            }
             if (x1 <= clip_rect.z && x2 >= clip_rect.x)
             {
                 // Render a character
@@ -3489,8 +3502,10 @@ void ImFont::RenderText(ImDrawList* draw_list, float size, ImVec2 pos, ImU32 col
                     }
                 }
 
-                col &= 0x00FFFFFF;
-                col |= (c << 24);
+                if (g_run_imtui) {
+                    col &= 0x00FFFFFF;
+                    col |= (c << 24);
+                }
                 // Support for untinted glyphs
                 ImU32 glyph_col = glyph->Colored ? col_untinted : col;
 

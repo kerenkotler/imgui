@@ -3588,9 +3588,10 @@ void ImGui::RenderArrow(ImDrawList* draw_list, ImVec2 pos, ImU32 col, ImGuiDir d
 
 void ImGui::RenderBullet(ImDrawList* draw_list, ImVec2 pos, ImU32 col)
 {
-    //draw_list->AddCircleFilled(pos, draw_list->_Data->FontSize * 0.20f, col, 8);
     draw_list->AddText(ImVec2(pos.x - 0.5, pos.y - 0.5), col, "B");
 }
+
+extern bool g_run_imtui;
 
 void ImGui::RenderCheckMark(ImDrawList* draw_list, ImVec2 pos, ImU32 col, float sz, const char * symbol)
 {
@@ -3600,12 +3601,16 @@ void ImGui::RenderCheckMark(ImDrawList* draw_list, ImVec2 pos, ImU32 col, float 
 
     float third = sz / 3.0f;
     float bx = pos.x + third;
-    float by = pos.y + sz - third*0.5f;
-    //draw_list->PathLineTo(ImVec2(bx - third, by - third));
-    //draw_list->PathLineTo(ImVec2(bx, by));
-    //draw_list->PathLineTo(ImVec2(bx + third*2, by - third*2));
-    //draw_list->PathStroke(col, false, thickness);
-    draw_list->AddText(ImVec2(pos.x - 0.5, pos.y - 0.5), col, symbol);
+    float by = pos.y + sz - third * 0.5f;
+    if (g_run_imtui) {
+        float by = pos.y + sz - third*0.5f;
+        draw_list->AddText(ImVec2(pos.x - 0.5, pos.y - 0.5), col, symbol);
+    } else {
+        draw_list->PathLineTo(ImVec2(bx - third, by - third));
+        draw_list->PathLineTo(ImVec2(bx, by));
+        draw_list->PathLineTo(ImVec2(bx + third*2, by - third*2));
+        draw_list->PathStroke(col, false, thickness);
+    }
 }
 
 void ImGui::RenderMouseCursor(ImDrawList* draw_list, ImVec2 pos, float scale, ImGuiMouseCursor mouse_cursor, ImU32 col_fill, ImU32 col_border, ImU32 col_shadow)

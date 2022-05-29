@@ -783,6 +783,8 @@ bool ImGui::ArrowButton(const char* str_id, ImGuiDir dir)
     return ArrowButtonEx(str_id, dir, ImVec2(sz, sz), ImGuiButtonFlags_None);
 }
 
+extern bool g_run_imtui;
+
 // Button to close a window
 bool ImGui::CloseButton(ImGuiID id, const ImVec2& pos)//, float size)
 {
@@ -803,16 +805,22 @@ bool ImGui::CloseButton(ImGuiID id, const ImVec2& pos)//, float size)
     ImU32 col = GetColorU32(held ? ImGuiCol_ButtonActive : ImGuiCol_ButtonHovered);
     ImVec2 center = bb.GetCenter();
     if (hovered) {
-        //window->DrawList->AddCircleFilled(center, ImMax(2.0f, g.FontSize * 0.5f + 1.0f), col, 12);
-        window->DrawList->AddCircleFilled(center + ImVec2(0.0, 0), 0.1f, col, 12);
+        if (g_run_imtui) {
+            window->DrawList->AddCircleFilled(center + ImVec2(0.0, 0), 0.1f, col, 12);
+        } else {
+            window->DrawList->AddCircleFilled(center, ImMax(2.0f, g.FontSize * 0.5f + 1.0f), col, 12);
+        }
     }
 
     float cross_extent = g.FontSize * 0.5f * 0.7071f - 1.0f;
     ImU32 cross_col = GetColorU32(ImGuiCol_Text);
     center -= ImVec2(0.5f, 0.5f);
-    window->DrawList->AddText(center + ImVec2(-2.0,-cross_extent), cross_col, "[X]");
-    //window->DrawList->AddLine(center + ImVec2(+cross_extent,+cross_extent), center + ImVec2(-cross_extent,-cross_extent), cross_col, 1.0f);
-    //window->DrawList->AddLine(center + ImVec2(+cross_extent,-cross_extent), center + ImVec2(-cross_extent,+cross_extent), cross_col, 1.0f);
+    if (g_run_imtui) {
+        window->DrawList->AddText(center + ImVec2(-2.0,-cross_extent), cross_col, "[X]");
+    } else {
+        window->DrawList->AddLine(center + ImVec2(+cross_extent,+cross_extent), center + ImVec2(-cross_extent,-cross_extent), cross_col, 1.0f);
+        window->DrawList->AddLine(center + ImVec2(+cross_extent,-cross_extent), center + ImVec2(-cross_extent,+cross_extent), cross_col, 1.0f);
+    }
 
     return pressed;
 }
